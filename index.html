@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website dengan Upload Foto & Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .upload-section {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .media-item {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Website Upload Foto & Video</h1>
+    
+    <div class="upload-section">
+        <input type="file" id="fileInput" accept="image/*,video/*" multiple>
+        <button onclick="uploadFiles()">Upload Files</button>
+        <p>Drag & drop files here atau klik untuk memilih</p>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        function uploadFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            const gallery = document.getElementById('gallery');
+            
+            for (let file of files) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const mediaElement = file.type.startsWith('image/') ? 
+                        `<img src="${e.target.result}" class="media-item" alt="${file.name}">` :
+                        `<video controls class="media-item"><source src="${e.target.result}" type="${file.type}"></video>`;
+                    
+                    gallery.innerHTML += mediaElement;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Reset input
+            fileInput.value = '';
+        }
+
+        // Drag and drop functionality
+        const uploadSection = document.querySelector('.upload-section');
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.backgroundColor = '#f0f0f0';
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.style.backgroundColor = '';
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.backgroundColor = '';
+            document.getElementById('fileInput').files = e.dataTransfer.files;
+            uploadFiles();
+        });
+    </script>
+</body>
+</html>
